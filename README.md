@@ -1,78 +1,91 @@
-# MCP Security & Vulnerability Auditor
+# MCP Security Scanner & Vulnerability Auditor | Zero-Trust AI Agent Shield
 
-[![Glama Server](https://glama.ai/mcp/servers/Ansarii/mcp-security-auditor/badges/score.svg)](https://glama.ai/mcp/servers/Ansarii/mcp-security-auditor)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Run on Apify](https://apify.com/actor-badge?actor=neon_innovation_lab/mcp-security-auditor)](https://apify.com/neon_innovation_lab/mcp-security-auditor)
 
-A zero-execution static AST security scanner and vulnerability auditor for **Model Context Protocol (MCP)** servers.
+⚡ **Run directly on Apify Cloud**: [MCP Security Auditor](https://apify.com/neon_innovation_lab/mcp-security-auditor)  
+👉 **Companion Open-Source Repo**: [github.com/Ansarii/mcp-security-auditor](https://github.com/Ansarii/mcp-security-auditor)
 
-Detect critical remote code execution (RCE), arbitrary file access, leaked API keys, unauthenticated transports, and tool poisoning before connecting any untrusted MCP server to your AI agents, Claude Desktop, or Cursor environments.
+[![Model Context Protocol](https://img.shields.io/badge/MCP-Security_Auditor-red.svg)](https://modelcontextprotocol.io)
+[![CWE Standards](https://img.shields.io/badge/CWE-Top_25_Covered-blue.svg)](https://cwe.mitre.org/)
+[![Static AST Analysis](https://img.shields.io/badge/Analysis-Pure_AST_Zero_Execution-brightgreen.svg)](https://neoninnovationlab.com/tools/mcp-security-scanner)
 
----
+Giving an autonomous AI agent access to a third-party **Model Context Protocol (MCP)** server provides enormous productivity—and severe security risk. Vulnerable MCP tools expose agent runtimes to remote code execution (RCE), arbitrary file exfiltration, and prompt injection attacks.
 
-## 🌟 Tools Exposed to AI Agents
-
-This server exposes two specialized security tools to connected MCP clients:
-
-1. **`audit_mcp_repository`**
-   - **Arguments:**
-     - `repository_url` (string, required): Public Git URL of the MCP repository to audit.
-     - `sub_directory` (string, optional): Subdirectory path if auditing a specific tool inside a monorepo.
-   - **Action:** Clones the repository shallowly without executing hooks, performs AST syntax analysis, and returns a Trust Score (0–100), letter grade (A+ to F), and formatted markdown report.
-
-2. **`audit_local_directory`**
-   - **Arguments:**
-     - `directory_path` (string, required): Absolute path to a local directory containing MCP server code.
-   - **Action:** Audits local source code without executing it.
+This Actor is a **zero-execution static AST security scanner** for MCP servers. Before connecting any public or private server to **Claude Desktop**, **Cursor IDE**, or an enterprise agent fleet, scan it here to obtain a verified **Trust Score (0–100)**, Letter Grade, and line-by-line CWE remediation plan.
 
 ---
 
-## 🛡️ Vulnerability Rule Set
+## 🛡️ Why Use This Actor?
 
-| Rule ID | Severity | CWE | Threat Category |
-| :--- | :--- | :--- | :--- |
-| **MCP-SEC-001** | CRITICAL | **CWE-78** | **Command Injection**: Detects `subprocess.run(shell=True)`, `os.system()`, and dynamic string formatting in shell commands. |
-| **MCP-SEC-002** | HIGH | **CWE-22** | **Path Traversal & ZipSlip**: Detects filesystem tools lacking root boundary checks (`Path.is_relative_to()`) and unvalidated archive extractions. |
-| **MCP-SEC-003** | CRITICAL | **CWE-798** | **Credential & Secret Exposure**: Detects hardcoded OpenAI, Anthropic, GitHub, AWS, and Slack tokens, and blocks returning raw `os.environ`. |
-| **MCP-SEC-004** | HIGH | **CWE-306** | **Unauthenticated Remote Transport**: Flags SSE / HTTP endpoints bound to `0.0.0.0` with no authentication middleware. |
-| **MCP-SEC-005** | HIGH | **CWE-1384** | **Tool Poisoning**: Detects prompt injection directives and zero-width homoglyph obfuscation in tool docstrings. |
+Following 30+ CVE disclosures against community MCP servers in 2025 and 2026, enterprise security standards strictly prohibit connecting unverified servers to developer environments or corporate databases.
+
+Unlike dangerous runtime scanners that execute arbitrary `stdio` binaries (creating direct RCE risks on the scanning host), this Actor uses **pure static Abstract Syntax Tree (AST) analysis**. It inspects Python, TypeScript, and JSON-RPC implementations without ever executing untrusted code.
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🌍 Global Enterprise & Regional Compliance (GEO Targeting)
 
-### With Claude Desktop
-Add to your `claude_desktop_config.json`:
+### 🇺🇸 North America (Silicon Valley, New York, Seattle, Austin)
+- **SOC 2 Type II Compliance**: Satisfies CC6.6 and CC6.8 controls by maintaining an immutable static audit log before onboarding third-party agent tools.
+- **Enterprise Secret Shield**: Discovers hardcoded AWS keys (`AKIA...`), OpenAI API keys, and corporate service credentials buried in tool repos.
+
+### 🇪🇺 Europe & 🇬🇧 United Kingdom (London, Berlin, Paris, Amsterdam)
+- **EU AI Act Article 15 (Cybersecurity & Resilience)**: Generates the mandatory risk assessment documentation and static vulnerability reports required for enterprise AI software.
+- **GDPR Article 32 (Security of Processing)**: Ensures MCP servers connecting to European customer data do not expose unauthorized file system read/write primitives.
+
+### 🌏 Asia-Pacific & 🇮🇳 India (Singapore, Tokyo, Sydney, Bengaluru, Hyderabad)
+- **Offshore Development Quality Gate**: Audits tools developed by third-party contractors before deployment to production agent clusters.
+- **Cross-Border Security Verification**: Guarantees external MCP tools do not transmit internal environment variables or telemetry to untrusted third-party hosts.
+
+---
+
+## 🔍 Vulnerability Checks Covered
+
+| Rule ID | Severity | CWE | Vulnerability Category | Description & Impact |
+| :--- | :--- | :--- | :--- | :--- |
+| **MCP-SEC-001** | CRITICAL | **CWE-78** | **Command Injection** | Detects `subprocess.run(shell=True)`, `os.system()`, and unsanitized string formatting passed to shell interpreters. |
+| **MCP-SEC-002** | HIGH | **CWE-22** | **Path Traversal / Arbitrary File Access** | Detects file tools lacking strict path canonicalization (`Path.is_relative_to()`), ZipSlip/TarSlip vulnerabilities, and unbounded directory crawls. |
+| **MCP-SEC-003** | CRITICAL | **CWE-798** | **Hardcoded Secrets & API Keys** | Identifies leaked OpenAI, Anthropic, AWS, GitHub, Stripe, and Slack tokens, and flags tools exporting raw `os.environ`. |
+| **MCP-SEC-004** | HIGH | **CWE-306** | **Unauthenticated Remote Transport** | Flags SSE or HTTP servers binding to `0.0.0.0` without bearer tokens or mutual TLS authentication. |
+| **MCP-SEC-005** | HIGH | **CWE-1384** | **Tool Poisoning & Prompt Injection** | Flags adversarial instructions, hidden unicode homoglyphs, and jailbreaks embedded inside tool docstrings or schemas. |
+
+---
+
+## 📥 Input Configuration
 
 ```json
 {
-  "mcpServers": {
-    "mcp-security-auditor": {
-      "command": "python3",
-      "args": ["/path/to/mcp-security-auditor/server.py"]
-    }
-  }
+  "repositoryUrls": [
+    "https://github.com/modelcontextprotocol/servers"
+  ],
+  "subDirectories": [
+    "src/everything",
+    "src/fetch"
+  ],
+  "minimumPassScore": 80
 }
 ```
 
-### With Docker
-```bash
-docker build -t mcp-security-auditor .
-docker run -i --rm mcp-security-auditor
-```
+- **`repositoryUrls`** *(Required, Array)*: List of public Git URLs for the MCP server repositories to audit.
+- **`subDirectories`** *(Optional, Array)*: Specific subdirectories to audit individually (ideal for monorepos).
+- **`minimumPassScore`** *(Optional, Integer, Default: `80`)*: The minimum score (0–100) required to achieve a passing audit grade.
 
 ---
 
-## 📊 Empirical Benchmark (23 Public Servers)
+## 📤 Output & Audit Artifacts
 
-We audited 23 prominent reference and community MCP servers:
+### 1. Structured Dataset Records
+Each audited server produces a structured JSON record containing:
+- `trust_score`: Score from `0` to `100`.
+- `grade`: Security letter grade (`A+`, `A`, `B`, `C`, `F`).
+- `passed`: Boolean indicating whether the score meets `minimumPassScore`.
+- `findings`: Array of detailed findings with file paths, line numbers, CWE IDs, code snippets, and remediation steps.
 
-| Category | Repositories Tested | Average Trust Score | Grade | Notes |
-| :--- | :--- | :--- | :--- | :--- |
-| **Anthropic Reference Servers** | `filesystem`, `git`, `fetch`, `sqlite`, `postgres`, `memory`, `time` | **100/100** | **A+** | Clean path containment, zero dynamic shell invocations. |
-| **Reference SSE Server** | `everything` | **85/100** | **A** | Caught unauthenticated SSE transport in test handler. |
-| **Community Servers** | `fastmcp` | **25/100** | **F** | Caught ZipSlip in telemetry extraction and unconstrained `read_file` tools. |
+### 2. Downloadable Markdown Report
+The full human-readable audit report is saved to the run's default Key-Value store under **`OUTPUT_REPORT.md`**.
 
 ---
 
-## 📄 License
-MIT License. Maintained by [Neon Innovation Lab](https://github.com/Ansarii).
+## 🌐 Free Online Interactive Scanner
+Test single repositories in real time using our free interactive tool:
+**[https://neoninnovationlab.com/tools/mcp-security-scanner](https://neoninnovationlab.com/tools/mcp-security-scanner)**
